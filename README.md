@@ -78,7 +78,7 @@ https://raw.githubusercontent.com/BeiDouMS/beidou-cli/master/beidou-cli.md
 
 **Claude Code 用户：**
 
-将文件放到项目的 `.claude/commands/` 目录下，即可通过 `/beidou-cli` 指令直接调用。
+将文件放到 `~/.claude/commands/`（全局，推荐）或 `<project>/.claude/commands/`（仅当前项目）目录下，即可通过 `/beidou-cli` 指令直接调用。
 
 ### 安装 beidou CLI 二进制
 

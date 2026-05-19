@@ -5,7 +5,29 @@ description: Use the beidou CLI to interact with BeiDou-Server via HTTP API.
 
 # beidou CLI Guide
 
-You have the `beidou` CLI available, a tool for managing a game server (BeiDou-Server) through HTTP API.
+`beidou` is a CLI tool for managing BeiDou-Server through HTTP API.
+
+## If `beidou` Is Not Installed
+
+Check by running `beidou version`. If the command is not found, install with the exact one-liner below — do NOT manually download or build from source:
+
+**Windows (PowerShell):**
+```powershell
+# 直连 GitHub
+irm https://raw.githubusercontent.com/BeiDouMS/beidou-cli/master/install.ps1 | iex
+# 或通过 ghproxy 代理加速
+irm https://raw.githubusercontent.com/BeiDouMS/beidou-cli/master/install-cn.ps1 | iex
+```
+
+**macOS / Linux:**
+```bash
+# 直连 GitHub
+curl -fsSL https://raw.githubusercontent.com/BeiDouMS/beidou-cli/master/install.sh | bash
+# 或通过 ghproxy 代理加速
+curl -fsSL https://raw.githubusercontent.com/BeiDouMS/beidou-cli/master/install-cn.sh | bash
+```
+
+The script handles download, PATH setup, and platform detection automatically. After install, restart the terminal or reload PATH.
 
 ## TL;DR
 
