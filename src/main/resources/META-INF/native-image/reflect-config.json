@@ -27,6 +27,33 @@
     "allPublicFields": true
   },
   {
+    "name": "org.gms.command.BatchCommand",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "org.gms.Main$VersionCommand",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "org.gms.command.ApiListCommand",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
     "name": "org.gms.Main$CallCommand",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
@@ -54,6 +81,11 @@
     "allPublicFields": true
   },
   {
+    "name": "org.gms.util.JsonUtils",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
     "name": "org.gms.model.SubmitBody",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
@@ -75,7 +107,7 @@
     "allPublicConstructors": true
   },
   {
-    "name": "com.fasterxml.jackson.databind.node.ObjectNode",
+    "name": "tools.jackson.databind.node.ObjectNode",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,

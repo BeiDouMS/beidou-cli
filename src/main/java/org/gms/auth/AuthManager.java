@@ -1,11 +1,9 @@
 package org.gms.auth;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gms.config.CliConfig;
 import org.gms.model.ResultBody;
 import org.gms.model.SubmitBody;
+import tools.jackson.core.type.TypeReference;
 
 import java.io.IOException;
 import java.net.URI;
@@ -17,8 +15,9 @@ import java.time.Duration;
 import java.util.Base64;
 import java.util.Map;
 
+import static org.gms.util.JsonUtils.*;
+
 public class AuthManager {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final HttpClient HTTP = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
@@ -41,7 +40,7 @@ public class AuthManager {
         var submitBody = new SubmitBody(Map.of("username", config.getUsername(), "password", config.getPassword()));
 
         try {
-            var bodyJson = MAPPER.writeValueAsString(submitBody);
+            var bodyJson = toJson(submitBody);
             var request = HttpRequest.newBuilder()
                     .uri(loginUrl)
                     .header("Content-Type", "application/json")
@@ -49,11 +48,12 @@ public class AuthManager {
                     .timeout(Duration.ofSeconds(15))
                     .build();
 
-            var response = HTTP.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            var result = MAPPER.readValue(response.body(), new TypeReference<ResultBody>() {});
+            var responseBody = HTTP.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)).body();
+            var result = fromJson(responseBody, new TypeReference<ResultBody>() {});
 
             if (!result.isSuccess()) {
                 System.err.println("登录失败: " + result.message());
+                System.err.println("服务端响应: " + responseBody);
                 System.err.println("请检查用户名、密码和服务地址是否正确");
                 System.exit(1);
             }
@@ -96,7 +96,7 @@ public class AuthManager {
         }
         try {
             var payload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
-            var node = MAPPER.readTree(payload);
+            var node = readTree(payload);
             var exp = node.get("exp");
             if (exp != null) {
                 return exp.asLong() * 1000; // jwt exp is in seconds

@@ -2,19 +2,17 @@ package org.gms.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.gms.util.JsonUtils.*;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CliConfig {
     private static final Path CONFIG_DIR = Path.of(System.getProperty("user.home"), ".beidou-cli");
     private static final Path CONFIG_FILE = CONFIG_DIR.resolve("config.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-            .enable(SerializationFeature.INDENT_OUTPUT);
 
     private String server;
     private String username;
@@ -28,7 +26,7 @@ public class CliConfig {
         }
         try {
             return MAPPER.readValue(CONFIG_FILE.toFile(), CliConfig.class);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return new CliConfig();
         }
     }
@@ -36,8 +34,8 @@ public class CliConfig {
     public void save() {
         try {
             Files.createDirectories(CONFIG_DIR);
-            MAPPER.writeValue(CONFIG_FILE.toFile(), this);
-        } catch (IOException e) {
+            Files.writeString(CONFIG_FILE, toPrettyJson(this));
+        } catch (Exception e) {
             System.err.println("保存配置失败: " + e.getMessage());
         }
     }

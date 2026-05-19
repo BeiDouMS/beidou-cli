@@ -1,8 +1,5 @@
 package org.gms.http;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.gms.auth.AuthManager;
 import org.gms.config.CliConfig;
 import org.gms.model.SubmitBody;
@@ -15,9 +12,9 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
+import static org.gms.util.JsonUtils.*;
+
 public class ApiClient {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-            .enable(SerializationFeature.INDENT_OUTPUT);
     private static final HttpClient HTTP = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
@@ -33,36 +30,63 @@ public class ApiClient {
     }
 
     public void call(String method, String path, String bodyJson) {
-        var token = authManager.ensureToken();
+        // /auth/** 路径免认证
+        var needAuth = !path.startsWith("/auth/");
+        var token = needAuth ? authManager.ensureToken() : null;
         var loginAttempts = 1;
 
         while (true) {
             try {
                 var response = sendRequest(method, path, bodyJson, token);
-                if (response.statusCode() == 401) {
+                var responseBody = response.body();
+
+                if (response.statusCode() == 401 && needAuth) {
                     if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
-                        System.err.println("请求失败: 连续 " + MAX_LOGIN_ATTEMPTS + " 次认证失败");
-                        System.err.println("请确认用户名、密码和服务地址配置正确");
-                        System.err.println("当前配置: server=" + config.getServer() + " username=" + config.getUsername());
+                        System.err.println("认证失败: 已重试 " + MAX_LOGIN_ATTEMPTS + " 次");
+                        System.err.println("服务端响应: " + responseBody);
                         System.exit(1);
                     }
-                    // 清空旧 token，重新登录再重试
                     authManager.clearToken();
                     token = authManager.forceLogin();
                     loginAttempts++;
                     continue;
                 }
-                // 正常输出结果
-                var responseBody = response.body();
-                var node = MAPPER.readTree(responseBody);
-                System.out.println(MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(node));
+
+                // 输出结果
+                System.out.println(toPrettyJson(readTree(responseBody)));
                 return;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.err.println("请求失败: " + e.getMessage());
                 System.exit(1);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.exit(1);
+            }
+        }
+    }
+
+    /** 给 batch 用的版本，不 System.exit，失败时抛异常 */
+    public void callForBatch(String method, String path, String bodyJson) {
+        var needAuth = !path.startsWith("/auth/");
+        var token = needAuth ? authManager.ensureToken() : null;
+        var loginAttempts = 1;
+
+        while (true) {
+            try {
+                var response = sendRequest(method, path, bodyJson, token);
+                var responseBody = response.body();
+
+                if (response.statusCode() == 401 && needAuth) {
+                    if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+                        throw new RuntimeException("认证失败: 已重试 " + MAX_LOGIN_ATTEMPTS + " 次, body=" + responseBody);
+                    }
+                    authManager.clearToken();
+                    token = authManager.forceLogin();
+                    loginAttempts++;
+                    continue;
+                }
+
+                System.out.println(toPrettyJson(readTree(responseBody)));
+                return;
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(method + " " + path + " 请求异常: " + e.getMessage(), e);
             }
         }
     }
@@ -78,11 +102,11 @@ public class ApiClient {
             // 包装到 SubmitBody.data
             String wrapped;
             try {
-                var dataNode = MAPPER.readTree(bodyJson);
-                wrapped = MAPPER.writeValueAsString(new SubmitBody(dataNode));
-            } catch (IOException e) {
+                var dataNode = readTree(bodyJson);
+                wrapped = toJson(new SubmitBody(dataNode));
+            } catch (Exception e) {
                 // 非 JSON 时原样放入 data
-                wrapped = MAPPER.writeValueAsString(new SubmitBody(bodyJson));
+                wrapped = toJson(new SubmitBody(bodyJson));
             }
             var bodyPublisher = HttpRequest.BodyPublishers.ofString(wrapped);
             builder.header("Content-Type", "application/json");
