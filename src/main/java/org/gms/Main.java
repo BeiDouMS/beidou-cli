@@ -3,6 +3,8 @@ package org.gms;
 import org.gms.auth.AuthManager;
 import org.gms.command.ApiListCommand;
 import org.gms.command.BatchCommand;
+import org.gms.command.UpdateCommand;
+import org.gms.command.UninstallCommand;
 import org.gms.config.CliConfig;
 import org.gms.http.ApiClient;
 import picocli.CommandLine;
@@ -31,7 +33,9 @@ import java.util.concurrent.Callable;
                 Main.CallCommand.class,
                 Main.VersionCommand.class,
                 ApiListCommand.class,
-                BatchCommand.class
+                BatchCommand.class,
+                UpdateCommand.class,
+                UninstallCommand.class
         }
 )
 public class Main implements Callable<Integer> {
@@ -219,7 +223,7 @@ public class Main implements Callable<Integer> {
         }
     }
 
-    static class VersionProvider implements CommandLine.IVersionProvider {
+    public static class VersionProvider implements CommandLine.IVersionProvider {
         @Override
         public String[] getVersion() {
             return new String[] { readVersion() };

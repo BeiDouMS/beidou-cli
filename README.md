@@ -20,6 +20,18 @@ irm https://raw.githubusercontent.com/BeiDouMS/beidou-cli/master/install.ps1 | i
 
 安装并自动加入用户 PATH，重启终端即可使用。
 
+### 更新
+
+```bash
+beidou update    # 自动下载最新版覆盖当前二进制
+```
+
+如需卸载：
+
+```bash
+beidou uninstall  # 删除二进制并清理 PATH
+```
+
 ### 手动下载
 
 从 [Releases](https://github.com/BeiDouMS/beidou-cli/releases/latest) 页面下载对应平台的二进制。

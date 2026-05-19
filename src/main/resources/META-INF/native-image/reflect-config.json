@@ -27,6 +27,24 @@
     "allPublicFields": true
   },
   {
+    "name": "org.gms.command.UpdateCommand",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
+    "name": "org.gms.command.UninstallCommand",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true
+  },
+  {
     "name": "org.gms.command.BatchCommand",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
@@ -34,6 +52,11 @@
     "allPublicMethods": true,
     "allDeclaredFields": true,
     "allPublicFields": true
+  },
+  {
+    "name": "org.gms.Main$VersionProvider",
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
   },
   {
     "name": "org.gms.Main$VersionCommand",
